@@ -1,0 +1,530 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "BAREFOOT NOMAD",
+    "description": "Making company travel and accommodation easy and convenient",
+    "contact": {
+      "email": "barefootnomadmail@gmail.com"
+    }
+  },
+  "securityDefinitions": {
+    "Bearer": {
+      "type": "apiKey",
+      "name": "x-auth-token",
+      "in": "header"
+    }
+  },
+  "host": "shadowcat-backend-staging.herokuapp.com",
+  "basePath": "/api/v1",
+  "schemes": [
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "tags": [
+    {
+      "name": "Users",
+      "description": "api route for all users"
+    }
+  ],
+  "paths": {
+    "/users/forgot_password": {
+      "x-swagger-router-controller": "UserController",
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "operationId": "ResetPasswordPost",
+        "description": "Send a user and email with the reset link",
+        "summary": "shadowcat-backend-staging.herokuapp.com/api/v1/users/forgot_password",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": ""
+          },
+          {
+            "name": "email",
+            "in": "formData",
+            "required": true,
+            "type": "string",
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/SendEmailResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "404": {
+            "description": "The email is not found",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/users/forgot_password/:token": {
+      "x-swagger-router-controller": "UserController",
+      "patch": {
+        "description": "User can reset password as long as token is valid",
+        "summary": "shadowcat-backend-staging.herokuapp.com/api/v1/users/forgot_password/:token",
+        "tags": [
+          "Users"
+        ],
+        "operationId": "ResetPasswordPatch",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": ""
+          },
+          {
+            "name": "newPassword",
+            "in": "formData",
+            "required": true,
+            "type": "string",
+            "description": ""
+          },
+          {
+            "name": "confirmPassword",
+            "in": "formData",
+            "required": true,
+            "type": "string",
+            "description": ""
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/SendEmailResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "403": {
+            "description": "Unauthorized Access",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/auth/signup": {
+      "x-swagger-router-controller": "AuthController",
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "operationId": "UserSignup",
+        "description": "Users can create an account",
+        "summary": "User sign up",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "parameters": [
+          {
+            "name": "firstname",
+            "in": "formData",
+            "required": true,
+            "type": "string",
+            "description": "User first name"
+          },
+          {
+            "name": "lastname",
+            "in": "formData",
+            "required": true,
+            "type": "string",
+            "description": "User last name"
+          },
+          {
+            "name": "email",
+            "in": "formData",
+            "required": true,
+            "type": "string",
+            "description": "User email"
+          },
+          {
+            "name": "phone",
+            "in": "formData",
+            "required": true,
+            "type": "string",
+            "description": "User phone number"
+          },
+          {
+            "name": "password",
+            "in": "formData",
+            "required": true,
+            "type": "string",
+            "description": "User password"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/SignUpResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/SignUpErrorResponse"
+            }
+          },
+          "409": {
+            "description": "Conflicting Request",
+            "schema": {
+              "$ref": "#/definitions/SignUpErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/SignUpErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/auth/verify/{token}": {
+      "x-swagger-router-controller": "AuthController",
+      "put": {
+        "tags": [
+          "Auth"
+        ],
+        "operationId": "UserEmailVerify",
+        "description": "Users can verify their account through email verification",
+        "summary": "User email verify",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Validation token"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/SignUpVerificationResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/trips/request": {
+      "x-swagger-router-controller": "TripsController",
+      "post": {
+        "description": "An endpoint for booking a multi-city trip request",
+        "tags": [
+          "Trips"
+        ],
+        "summary": "Posts a trip request",
+        "operationId": "Trips2Post",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "default": "Bearer {token}",
+            "type": "string"
+          },
+          {
+            "name": "departureDate",
+            "in": "formData",
+            "required": true,
+            "default": "2019-10-01",
+            "type": "string",
+            "description": "Date Format is YYYY-MM-DD"
+          },
+          {
+            "name": "returnDate",
+            "in": "formData",
+            "required": true,
+            "default": "2019-10-30",
+            "type": "string",
+            "description": "Date Format is YYYY-MM-DD"
+          },
+          {
+            "name": "currentOfficeLocation",
+            "in": "formData",
+            "required": true,
+            "default": "Lagos Office",
+            "type": "string",
+            "description": ""
+          },
+          {
+            "name": "reason",
+            "in": "formData",
+            "required": true,
+            "default": "Official",
+            "type": "string",
+            "description": ""
+          },
+          {
+            "name": "tripType",
+            "in": "formData",
+            "required": true,
+            "default": "Multi-city",
+            "type": "string",
+            "description": "This field must be Multi-city for this type of request"
+          },
+          {
+            "name": "Destination 1",
+            "in": "formData",
+            "required": true,
+            "default": "Abuja Office",
+            "type": "string",
+            "description": ""
+          },
+          {
+            "name": "Destination 2",
+            "in": "formData",
+            "required": true,
+            "default": "Lagos Office 2",
+            "type": "string",
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "headers": {}
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/SignUpErrorResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      },
+      "get": {
+        "description": "An endpoint getting history of user requests",
+        "tags": [
+          "Trips"
+        ],
+        "summary": "Get trip requests",
+        "operationId": "GetUserTrips",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "default": "Bearer {token}",
+            "type": "string"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "headers": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/SignUpErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "SendEmailResponse": {
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "number"
+            },
+            "email": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "SignUpResponse": {
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "userId": {
+              "type": "number"
+            },
+            "firstname": {
+              "type": "string"
+            },
+            "lastname": {
+              "type": "string"
+            },
+            "email": {
+              "type": "string"
+            },
+            "phone": {
+              "type": "string"
+            },
+            "active": {
+              "type": "boolean"
+            },
+            "createdAt": {
+              "type": "integer"
+            }
+          }
+        }
+      }
+    },
+    "SignUpVerificationResponse": {
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "string"
+        }
+      }
+    },
+    "ErrorResponse": {
+      "required": [
+        "status"
+      ],
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        }
+      }
+    },
+    "SignUpErrorResponse": {
+      "properties": {
+        "status": {
+          "type": "integer"
+        },
+        "error": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
